@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart Garbage Monitoring System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --green:#2e7d32;
+  --green2:#66bb6a;
+  --bg:#f1f8f4;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#e8f5e9,#c8e6c9);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+
+.phone{
+  width:380px;
+  height:760px;
+  background:white;
+  border-radius:25px;
+  overflow:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,0.2);
+  display:flex;
+  flex-direction:column;
+}
+
+header{
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:white;
+  padding:16px;
+  text-align:center;
+  font-weight:600;
+  letter-spacing:.5px;
+}
+
+.container{
+  flex:1;
+  overflow-y:auto;
+  padding:15px;
+  background:var(--bg);
+}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.title{
+  font-weight:600;
+  margin-bottom:5px;
+}
+
+.sub{
+  font-size:13px;
+  color:#666;
+}
+
+.highlight{
+  background:linear-gradient(135deg,#dcedc8,#c5e1a5);
+}
+
+input,textarea,select{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-family:'Poppins',sans-serif;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  margin-top:10px;
+  cursor:pointer;
+  background:var(--green);
+  color:white;
+  font-weight:500;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+.secondary{
+  background:#eee;
+  color:#333;
+}
+
+.hidden{
+  display:none;
+}
+
+nav{
+  display:flex;
+  justify-content:space-around;
+  border-top:1px solid #eee;
+  background:white;
+  padding:10px;
+}
+
+nav button{
+  background:none;
+  color:var(--green);
+  font-size:12px;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.missed{
+  background:#ffe0b2;
+}
+
+.overflow{
+  background:#ffcdd2;
+}
+
+.illegal{
+  background:#e1bee7;
+}
+
+.stats{
+  display:flex;
+  gap:10px;
+}
+
+.stat-box{
+  flex:1;
+  background:#e8f5e9;
+  padding:10px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.stat-box h2{
+  margin:0;
+}
+
+.report{
+  border-bottom:1px solid #eee;
+  padding:10px 0;
+}
+
+.resolve{
+  background:#2e7d32;
+}
+
+.delete{
+  background:#c62828;
+}
+
+.tip{
+  font-size:13px;
+  color:#555;
+  margin-top:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+<header>♻️ Smart Garbage System</header>
+
+<div class="container">
+
+<!-- REGISTER -->
+<div id="registerScreen">
+
+<div class="card">
+<div class="title">Create Account</div>
+<div class="sub">Help us personalize your waste collection</div>
+
+<input id="name" placeholder="Full Name">
+<input id="location" placeholder="Barangay / Area">
+<input id="contact" placeholder="Contact Number">
+
+<button onclick="registerUser()">Get Started</button>
+
+</div>
+
+</div>
+
+<!-- HOME -->
+<div id="home" class="hidden">
+
+<div class="card highlight">
+<div class="title">
+Hello, <span id="displayName"></span> 👋
+</div>
+
+<div class="sub">
+Let’s keep your area clean today!
+</div>
+</div>
+
+<div class="card">
+<div class="title">📅 Next Pickup</div>
+<div class="sub">May 10, 2026</div>
+<span class="badge missed">On Schedule</span>
+</div>
+
+<div class="card">
+<div class="title">🗂 Collection Schedule</div>
+<div class="sub">Mon - Biodegradable</div>
+<div class="sub">Wed - Non-biodegradable</div>
+<div class="sub">Fri - Recyclables</div>
+</div>
+
+<div class="card">
+<div class="title">✨ Quick Actions</div>
+
+<button onclick="show('report')">
+⚠️ Report a Problem
+</button>
+
+<button class="secondary" onclick="show('profile')">
+👤 View Profile
+</button>
+
+<button onclick="show('admin')">
+🛠 Open Admin Dashboard
+</button>
+
+</div>
+
+<div class="card">
+<div class="title">🌱 Eco Tips</div>
+
+<div class="tip">• Segregate waste properly</div>
+<div class="tip">• Reduce plastic usage</div>
+<div class="tip">• Recycle bottles and paper</div>
+
+</div>
+
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="hidden">
+
+<div class="card">
+
+<div class="title">Your Profile</div>
+
+<input id="editName">
+<input id="editLocation">
+<input id="editContact">
+
+<button onclick="saveProfile()">
+Save Changes
+</button>
+
+</div>
+
+</div>
+
+<!-- REPORT -->
+<div id="report" class="hidden">
+
+<div class="card">
+
+<div class="title">Report Problem</div>
+
+<select id="reportType">
+<option>Missed Pickup</option>
+<option>Overflowing Trash</option>
+<option>Illegal Dumping</option>
+</select>
+
+<textarea id="reportText" placeholder="Describe the issue..."></textarea>
+
+<button onclick="submitReport()">
+Submit Report
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="title">📌 Recent Reports</div>
+
+<div id="userReportList"></div>
+
+</div>
+
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="hidden">
+
+<div class="card">
+
+<div class="title">📊 Report Statistics</div>
+
+<div class="stats">
+
+<div class="stat-box">
+<h2 id="total">0</h2>
+<small>Total</small>
+</div>
+
+<div class="stat-box">
+<h2 id="missed">0</h2>
+<small>Missed</small>
+</div>
+
+<div class="stat-box">
+<h2 id="overflow">0</h2>
+<small>Overflow</small>
+</div>
+
+<div class="stat-box">
+<h2 id="illegal">0</h2>
+<small>Illegal</small>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">📋 All Reports</div>
+
+<div id="adminReportList"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<nav id="navBar" class="hidden">
+
+<button onclick="show('home')">🏠</button>
+
+<button onclick="show('report')">⚠️</button>
+
+<button onclick="show('profile')">👤</button>
+
+<button onclick="show('admin')">🛠</button>
+
+</nav>
+
+</div>
+
+<script>
+
+function show(screen){
+
+['home','profile','report','admin'].forEach(id=>{
+document.getElementById(id).classList.add('hidden');
+});
+
+document.getElementById(screen).classList.remove('hidden');
+
+if(screen === 'report'){
+loadUserReports();
+}
+
+if(screen === 'admin'){
+loadAdminReports();
+}
+
+}
+
+function registerUser(){
+
+let name=document.getElementById('name').value.trim();
+let location=document.getElementById('location').value.trim();
+let contact=document.getElementById('contact').value.trim();
+
+if(!name || !location || !contact){
+alert("Please fill all fields!");
+return;
+}
+
+let user={name,location,contact};
+
+localStorage.setItem('user',JSON.stringify(user));
+
+loadUser();
+
+}
+
+function loadUser(){
+
+let user=JSON.parse(localStorage.getItem('user'));
+
+if(user){
+
+document.getElementById('registerScreen').classList.add('hidden');
+
+document.getElementById('navBar').classList.remove('hidden');
+
+document.getElementById('displayName').innerText=user.name;
+
+document.getElementById('editName').value=user.name;
+document.getElementById('editLocation').value=user.location;
+document.getElementById('editContact').value=user.contact;
+
+show('home');
+
+}
+
+}
+
+function saveProfile(){
+
+let user={
+name:document.getElementById('editName').value,
+location:document.getElementById('editLocation').value,
+contact:document.getElementById('editContact').value
+};
+
+localStorage.setItem('user',JSON.stringify(user));
+
+loadUser();
+
+alert("Profile updated!");
+
+}
+
+function submitReport(){
+
+let text=document.getElementById('reportText').value;
+let type=document.getElementById('reportType').value;
+
+if(!text){
+alert("Please enter a report!");
+return;
+}
+
+let reports=JSON.parse(localStorage.getItem('reports')) || [];
+
+reports.push({
+text,
+type,
+date:new Date().toLocaleString()
+});
+
+localStorage.setItem('reports',JSON.stringify(reports));
+
+document.getElementById('reportText').value='';
+
+loadUserReports();
+
+alert("Report submitted!");
+
+}
+
+function loadUserReports(){
+
+let reports=JSON.parse(localStorage.getItem('reports')) || [];
+
+let list=document.getElementById('userReportList');
+
+list.innerHTML='';
+
+if(reports.length===0){
+
+list.innerHTML='<div class="sub">No reports yet 🎉</div>';
+
+return;
+
+}
+
+reports.slice().reverse().forEach(r=>{
+
+let div=document.createElement('div');
+
+div.className='sub';
+div.style.marginBottom='10px';
+
+div.innerHTML=`
+• <strong>${r.type}</strong><br>
+${r.text}<br>
+<small>${r.date}</small>
+`;
+
+list.appendChild(div);
+
+});
+
+}
+
+function loadAdminReports(){
+
+let reports=JSON.parse(localStorage.getItem('reports')) || [];
+
+document.getElementById('total').innerText=reports.length;
+
+let missed=0;
+let overflow=0;
+let illegal=0;
+
+reports.forEach(r=>{
+
+if(r.type==='Missed Pickup') missed++;
+if(r.type==='Overflowing Trash') overflow++;
+if(r.type==='Illegal Dumping') illegal++;
+
+});
+
+document.getElementById('missed').innerText=missed;
+document.getElementById('overflow').innerText=overflow;
+document.getElementById('illegal').innerText=illegal;
+
+let list=document.getElementById('adminReportList');
+
+list.innerHTML='';
+
+reports.slice().reverse().forEach((r,index)=>{
+
+let badgeClass='';
+
+if(r.type==='Missed Pickup') badgeClass='missed';
+if(r.type==='Overflowing Trash') badgeClass='overflow';
+if(r.type==='Illegal Dumping') badgeClass='illegal';
+
+let div=document.createElement('div');
+
+div.className='report';
+
+div.innerHTML=`
+
+<strong>${r.type}</strong><br>
+
+<div class="badge ${badgeClass}">
+${r.type}
+</div>
+
+<p>${r.text}</p>
+
+<small>${r.date}</small>
+
+<button class="resolve" onclick="resolveReport(${index})">
+✔ Resolve
+</button>
+
+<button class="delete" onclick="deleteReport(${index})">
+🗑 Delete
+</button>
+
+`;
+
+list.appendChild(div);
+
+});
+
+}
+
+function resolveReport(index){
+
+let reports=JSON.parse(localStorage.getItem('reports')) || [];
+
+reports.splice(index,1);
+
+localStorage.setItem('reports',JSON.stringify(reports));
+
+loadAdminReports();
+
+alert("Report resolved!");
+
+}
+
+function deleteReport(index){
+
+let reports=JSON.parse(localStorage.getItem('reports')) || [];
+
+reports.splice(index,1);
+
+localStorage.setItem('reports',JSON.stringify(reports));
+
+loadAdminReports();
+
+alert("Report deleted!");
+
+}
+
+window.onload=loadUser;
+
+</script>
+
+</body>
+</html>
